@@ -1,4 +1,4 @@
-Selection method: 3 for each category (first 8 categories)
+#Selection method: 3 for each category (first 8 categories)
 https://www.edx.org/course/ecodesign-cities-suburbs-ubcx-ecodesignx-0
 https://www.edx.org/course/architectural-imagination-harvardx-gsd1x
 https://www.edx.org/course/quality-life-livability-future-cities-ethx-fc-02x-1

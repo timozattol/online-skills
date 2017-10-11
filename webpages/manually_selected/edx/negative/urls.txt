@@ -1,4 +1,4 @@
-Selection method: take other pages of plateform
+#Selection method: take other pages of plateform
 https://www.edx.org/
 https://www.edx.org/course?course=all
 https://www.edx.org/schools-partners
