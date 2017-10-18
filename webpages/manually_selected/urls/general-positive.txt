@@ -1,1 +1,23 @@
 https://www.codecademy.com/learn/learn-python
+https://www.codecademy.com/learn/learn-html
+https://www.codecademy.com/learn/learn-css
+https://www.codecademy.com/learn/deploy-a-website
+https://www.codecademy.com/learn/learn-angularjs
+https://www.codecademy.com/learn/rails-auth
+# Openuniversity ok?
+http://www.openuniversity.edu/courses/qualifications/q79
+http://www.openuniversity.edu/courses/qualifications/q31
+http://www.openuniversity.edu/courses/qualifications/w43
+http://www.openuniversity.edu/courses/qualifications/t13-citm
+http://www.openuniversity.edu/courses/qualifications/s03
+http://www.openuniversity.edu/courses/postgraduate/qualifications/f04
+http://www.openuniversity.edu/courses/qualifications/t09
+http://www.openuniversity.edu/courses/qualifications/t09
+http://www.openuniversity.edu/courses/postgraduate/qualifications/f78
+http://www.openuniversity.edu/courses/postgraduate/qualifications/c90
+http://online-learning.harvard.edu/course/data-analysis-life-sciences-1-statistics-and-r-0
+http://online-learning.harvard.edu/course/data-analysis-life-sciences-2-introduction-linear-models-and-matrix-algebra
+http://online-learning.harvard.edu/course/data-analysis-life-sciences-5-introduction-bioconductor-annotation-and-analysis-genomes-and
+http://online-learning.harvard.edu/course/religion-conflict-and-peace
+http://online-learning.harvard.edu/course/world-religions-through-their-scriptures
+http://online-learning.harvard.edu/course/judaism-through-its-scriptures
