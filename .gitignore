@@ -1,3 +1,6 @@
+# Project specific
+webpages/manually_selected/dumps/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
