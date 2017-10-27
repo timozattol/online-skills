@@ -21,3 +21,23 @@ http://online-learning.harvard.edu/course/data-analysis-life-sciences-5-introduc
 http://online-learning.harvard.edu/course/religion-conflict-and-peace
 http://online-learning.harvard.edu/course/world-religions-through-their-scriptures
 http://online-learning.harvard.edu/course/judaism-through-its-scriptures
+https://www.udemy.com/data-analysis-with-excel-pivot-tables/
+https://www.udemy.com/complete-python-bootcamp/
+https://www.udemy.com/java-the-complete-java-developer-course/
+https://www.udemy.com/the-complete-web-developer-course-2/
+https://www.udemy.com/adobe-premiere-pro-video-editing/
+https://www.udemy.com/adobe-lightroom/
+https://www.udemy.com/communication-expert-become-an-effective-communicator/
+https://www.udemy.com/deeplearning/
+https://www.udemy.com/how-not-to-import-from-china/
+https://openclassrooms.com/courses/master-the-command-line
+https://openclassrooms.com/courses/immerse-yourself-in-ios-environment
+https://openclassrooms.com/courses/write-object-oriented-ruby
+https://openclassrooms.com/courses/learn-the-basics-of-javascript
+https://openclassrooms.com/courses/take-your-first-steps-with-ruby
+https://openclassrooms.com/courses/understand-the-role-of-product-manager
+https://openclassrooms.com/courses/integrate-a-wordpress-theme
+https://openclassrooms.com/courses/develop-your-leadership-for-better-management
+https://openclassrooms.com/courses/understanding-the-web
+https://openclassrooms.com/courses/build-your-first-android-app
+# Khan academy not same structure (no enroll page)
