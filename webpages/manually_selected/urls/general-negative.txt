@@ -129,3 +129,5 @@ https://en.wikipedia.org/wiki/Knowledge
 https://en.wikipedia.org/wiki/Business
 https://en.wikipedia.org/wiki/Python_(programming_language)
 https://en.wikipedia.org/wiki/Functional_programming
+https://en.wikipedia.org/wiki/HTML
+https://en.wikipedia.org/wiki/JavaScript

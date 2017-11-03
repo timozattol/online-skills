@@ -1,5 +1,6 @@
 # Project specific
 webpages/manually_selected/dumps/*
+webpages/manually_selected/cache/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
