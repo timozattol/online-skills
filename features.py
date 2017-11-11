@@ -1,9 +1,26 @@
 
 import re
 import pandas as pd
+
 from bs4 import BeautifulSoup
+from bs4.element import Comment
+
+from nltk.corpus import stopwords
+
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
 
 from crawler import is_cached, get_cached
+
+### Classification ###
+
+def analyse_classification(X, y, predictor, seed=0):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=seed)
+    predictor.fit(X_train, y_train)
+    y_pred = predictor.predict(X_test)
+
+    print(metrics.classification_report(y_test, y_pred))
+    print(metrics.confusion_matrix(y_test, y_pred))
 
 ### Structural features ###
 
@@ -41,6 +58,27 @@ def construct_structural_features(urls, labels, features):
 
 
 ### NLP features ###
+def construct_text_df(urls, labels):
+    '''
+
+    '''
+    row_list = []
+    columns = ["url", "label", "visible_text"]
+
+    for url, label in zip(urls, labels):
+        if is_cached(url):
+            soup = BeautifulSoup(get_cached(url), "lxml")
+
+        row = [url, label] + [extract_visible(soup)]
+
+        row_list.append(row)
+
+    df = pd.DataFrame(row_list, columns=columns)
+    df = df.set_index("url")
+
+    return df
+
+
 def tag_visible(element):
     '''Return true for elements that should be visible in the browser'''
     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -49,8 +87,16 @@ def tag_visible(element):
         return False
     return True
 
+def clean_string(string):
+    # Remove all double spaces and tabs/newlines/etc.
+    string = re.sub("\s\s+" , " ", string)
+
+    # Remove stopwords
+    words_no_stopwords = (word for word in string.split() if word not in stopwords.words('english'))
+    return ' '.join(words_no_stopwords)
+
 def extract_visible(soup):
     '''Extract all visible text from a BeautifulSoup soup'''
     text = soup.html.body.findAll(text=True)
     s = ' '.join(filter(tag_visible, text))
-    return re.sub("\s\s+" , " ", s) # remove all double spaces and tabs/newlines/etc.
+    return clean_string(s)
