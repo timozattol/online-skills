@@ -78,6 +78,17 @@ def get_original_url(response):
     '''
     return response.history[0].url if response.history else response.url
 
+def cache_page(url, text, replace=True):
+    '''Cache a already downloaded page'''
+
+    # Do nothing if don't want to replace and page is cached
+    if not replace:
+        if is_cached(url):
+            print("yea")
+            return
+
+
+
 
 def async_cache_pages(urls, delete_cache=False, threads=15, try_again_slow=True):
     '''Asychnronously cache pages by downloading them to the cache folder'''
