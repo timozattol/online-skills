@@ -1,126 +1,132 @@
-import grequests
 import os
+import time
+import random
+import requests
+from urllib.parse import urljoin
+from collections import deque
+import numpy as np
 
-webpages_path = os.path.join("webpages", "manually_selected")
-cache_folder = webpages_path + "/cache"
+import networkx as nx
+from bs4 import BeautifulSoup
+from sklearn.externals import joblib
 
-def urls_path(folder, positive=True):
-    '''Return path of a given file containing urls'''
-    pos = "positive" if positive else "negative"
-    path = "{}/urls/{}-{}.txt".format(webpages_path, folder, pos)
-    return path
+from features import extract_visible
+from helpers import get_cached, is_cached, eprint, url_to_filename
 
-def urls_list_folder(folder, positive=True):
-    '''Return the list of urls in given folder'''
-    path = urls_path(folder, positive)
+pipeline_path = os.path.join('saved', 'models', 'log_reg_pipeline_general3.pkl')
+pipeline = joblib.load(pipeline_path)
 
-    with open(path, 'r') as f:
-        urls = list(l.strip() for l in f if l[0] != "#")
-    f.close()
+class Node:
+    status = {
+        True: "class_true",
+        False: "class_false",
+        "fail": "req_failed",
+    }
 
-    return urls
+    def __init__(self, url, status, decision_func):
+        self.url = url
+        self.status = status
+        self.decision_func = decision_func
 
-def urls_list(folders):
-    '''
-    Construct positive and negative url list, concatenated
-    for all given folders
-    '''
-    positives = []
-    negatives = []
+    def __str__(self):
+        # Remove "https://www." part for clarity
+        stripped = "".join(self.url.split('://')[1:])
+        return stripped
 
-    for folder in folders:
-        positives.extend(urls_list_folder(folder, positive=True))
-        negatives.extend(urls_list_folder(folder, positive=False))
+    def __eq__(self, other):
+        if isinstance(self, other.__class__):
+            return self.url == other.url
+        return False
 
-    return positives, negatives
-
-def url_to_filename(url):
-    '''Modify url to be accepted as a filename'''
-    return url.replace("/", ",")
-
-def filename_to_url(filename):
-    '''Revert filename to the original url'''
-    return filename.replace(",", "/")
-
-def cache_path(url):
-    '''Create the path of the cached file corresponding to the url page'''
-    return "{}/{}".format(cache_folder, url_to_filename(url))
-
-def delete_all_files(folder):
-    '''Delete all files in given folder (!)'''
-    for file in os.listdir(folder):
-        file_path = os.path.join(folder, file)
-        try:
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-        except Exception as e:
-            print(e)
-
-def is_cached(url):
-    '''Return True if url is already cached'''
-    return os.path.isfile(cache_path(url))
-
-def get_cached(url):
-    '''Get cached version of webpage'''
-    if not is_cached(url):
-        raise Exception("{} not cached".format(url))
-
-    with open(cache_path(url), 'r') as f:
-        s = f.read()
-    f.close()
-
-    return s
-
-def get_original_url(response):
-    '''
-    Return original url from a request/grequests response.
-    With redirections, sometimes the response.url is different than original url
-    '''
-    return response.history[0].url if response.history else response.url
-
-def cache_page(url, text, replace=True):
-    '''Cache a already downloaded page'''
-
-    # Do nothing if don't want to replace and page is cached
-    if not replace and is_cached(url):
-        return
-
-    # Write to cache
-    with open(cache_path(url, 'w') as f:
-        f.write(text)
-    f.close()
+    def __hash__(self):
+        return hash(self.url)
 
 
+def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True):
 
-def async_cache_pages(urls, delete_cache=False, threads=15, try_again_slow=True):
-    '''Asychnronously cache pages by downloading them to the cache folder'''
-    if delete_cache:
-        delete_all_files(cache_folder)
+    # Queue containing: (url, depth)
+    queue = deque()
+    queue.append((initial_url, 0, None))
 
-    # Only request for pages not already in the cache folder
-    reqs = [grequests.get(url) for url in urls if not is_cached(url)]
-    try_again_urls = []
+    G = nx.DiGraph()
+    seen_urls = set()
 
+    print("BFS started with params: ")
+    print("Depth_limit: {}\nBreadth_limit: {}.".format(depth_limit, breadth_limit))
 
-    for r in grequests.imap(reqs, size=threads):
-        if r.status_code == 200:
-            with open(cache_path(get_original_url(r)), 'w') as f:
-                f.write(r.text)
-            f.close()
-        elif r.status_code == 429:
-            try_again_urls.append(get_original_url(r))
+    # Assuming download+sleep=1s
+    print("Estimated time: {}s".format(np.power(breadth_limit, depth_limit + 1)))
+    start_time = time.time()
+
+    while(len(queue) > 0):
+        url, depth, parent_node = queue.popleft()
+
+        print(".", end="")
+
+        # Add url to seen_urls here, to avoid infinite loop (if the page links to itself)
+        seen_urls.add(url)
+
+        # Fetch from cache or download the page
+        if is_cached(url):
+            text = get_cached(url)
+            status_code = 200
         else:
-            print("Error while downloading: {}. Status code: {}".format(r.url, r.status_code))
+            try:
+                # Sleep to avoid getting banned
+                time.sleep(0.5)
 
-    # Does not work amazingly. TODO should try to sleep in between requests
-    if try_again_slow:
-        print("Trying again to download {} pages one at a time".format(len(try_again_urls)))
+                r = requests.get(url)
+                status_code = r.status_code
+                text = r.text
+            except Exception as e:
+                eprint("Exception while requesting {}".format(url))
+                eprint(e)
+                status_code = -1
 
-        reqs_slow = [grequests.get(url) for url in try_again_urls if not is_cached(url)]
-        for r in grequests.imap(reqs_slow, size=1):
-            if r.status_code == 200:
-                with open(cache_path(get_original_url(r)), 'w') as f:
-                    f.write(r.text)
-                f.close()
-            else:
-                print("Error while downloading: {}. Status code: {}".format(r.url, r.status_code))
+
+        if status_code != 200:
+            node = Node(url, Node.status["fail"], 0)
+            G.add_node(node)
+        else:
+            try:
+                soup = BeautifulSoup(text, "lxml")
+                visible_text = extract_visible(soup)
+            except Exception as e:
+                eprint("Exception while parsing {}".format(url))
+                eprint(e)
+                continue
+
+            # Predict label & get strength of prediction
+            label = pipeline.predict([visible_text])[0]
+            decision_func = pipeline.decision_function([visible_text])[0]
+
+            node = Node(url, Node.status[label], decision_func)
+            G.add_node(node)
+
+            if depth < depth_limit:
+                # Get outgoing url in their absolute form
+                out_urls = (urljoin(url, a.get('href', '')) for a in soup.find_all("a"))
+
+                # Remove already seen urls
+                out_urls = [out_url for out_url in out_urls if out_url not in seen_urls]
+
+                # Keeping only <breadth_limit> out_urls
+                if len(out_urls) > breadth_limit:
+                    out_urls = random.sample(out_urls, breadth_limit)
+
+                queue.extend((out_url, depth + 1, node) for out_url in out_urls)
+
+        if parent_node is not None:
+            G.add_edge(parent_node, node)
+
+    print("Crawling finished after {}s".format(time.time() - start_time))
+
+    # Pickle file if asked
+    if save:
+        save_path = os.path.join('saved', 'graphs', "{}-depth:{}-breadth:{}.pkl"
+            .format(url_to_filename(initial_url), depth_limit, breadth_limit))
+
+        nx.write_gpickle(G, save_path)
+        print("Graph saved under {}".format(save_path))
+
+    return G

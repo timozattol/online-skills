@@ -10,17 +10,18 @@ from nltk.corpus import stopwords
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
-from crawler import is_cached, get_cached
+from helpers import is_cached, get_cached
 
 ### Classification ###
 
 def analyse_classification(X, y, predictor, seed=0):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=seed)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=seed)
     predictor.fit(X_train, y_train)
     y_pred = predictor.predict(X_test)
 
     print(metrics.classification_report(y_test, y_pred))
     print(metrics.confusion_matrix(y_test, y_pred))
+    print("Accuracy: {}".format(metrics.accuracy_score(y_test, y_pred)))
 
 ### Structural features ###
 
@@ -60,7 +61,7 @@ def construct_structural_features(urls, labels, features):
 ### NLP features ###
 def construct_text_df(urls, labels):
     '''
-
+    Construct a Dataframe with url, label and the visible text extracted
     '''
     row_list = []
     columns = ["url", "label", "visible_text"]
