@@ -82,11 +82,13 @@ def cache_page(url, text, replace=True):
     '''Cache a already downloaded page'''
 
     # Do nothing if don't want to replace and page is cached
-    if not replace:
-        if is_cached(url):
-            print("yea")
-            return
+    if not replace and is_cached(url):
+        return
 
+    # Write to cache
+    with open(cache_path(url, 'w') as f:
+        f.write(text)
+    f.close()
 
 
 
