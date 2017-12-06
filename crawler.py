@@ -5,6 +5,7 @@ import requests
 from urllib.parse import urljoin
 from collections import deque
 import numpy as np
+import pandas as pd
 
 import networkx as nx
 from bs4 import BeautifulSoup
@@ -40,6 +41,33 @@ class Node:
 
     def __hash__(self):
         return hash(self.url)
+
+def draw_graph(G, plt, print_pos=False, print_neg=False):
+    colors = []
+
+    for node in G:
+        if node.status == Node.status[True]:
+            if print_pos:
+                print("TRUE: {} {}".format(node.decision_func, node))
+            colors.append('green')
+        elif node.status == Node.status[False]:
+            if print_neg:
+                print("FALSE: {} {}".format(node.decision_func, node))
+            colors.append('red')
+        else:
+            # Download error
+            colors.append('grey')
+
+    fig, ax = plt.subplots(figsize=(15, 10))
+    nx.draw_kamada_kawai(G, ax=ax, node_color=colors, with_labels=False, node_size=50, width=0.5, alpha=1)
+
+def get_df(graph):
+    rows = []
+
+    for node in graph:
+        rows.append([node.url, node.status, node.decision_func])
+
+    return pd.DataFrame(rows, columns=["url", "status", "decision_func"])
 
 
 def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True):
@@ -105,7 +133,13 @@ def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True):
 
             if depth < depth_limit:
                 # Get outgoing url in their absolute form
-                out_urls = (urljoin(url, a.get('href', '')) for a in soup.find_all("a"))
+                out_urls = []
+                for a in soup.find_all("a"):
+                    try:
+                        out_urls.append(urljoin(url, a.get('href', '')))
+                    except:
+                        # URL is discarded is could not get absolute form
+                        print("Exception while joining {} with {}".format(url, a.get('href', '')))
 
                 # Remove already seen urls
                 out_urls = [out_url for out_url in out_urls if out_url not in seen_urls]
