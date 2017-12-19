@@ -2,7 +2,8 @@ import os
 import sys
 import grequests
 
-webpages_path = os.path.join("webpages", "manually_selected")
+webpages_path = os.path.join("webpages", "experiment1")
+
 cache_folder = webpages_path + "/cache"
 
 

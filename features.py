@@ -1,4 +1,3 @@
-
 import re
 import pandas as pd
 
@@ -70,9 +69,11 @@ def construct_text_df(urls, labels):
         if is_cached(url):
             soup = BeautifulSoup(get_cached(url), "lxml")
 
-        row = [url, label] + [extract_visible(soup)]
+            row = [url, label] + [extract_visible(soup)]
 
-        row_list.append(row)
+            row_list.append(row)
+        else:
+            print("Skipped {}, was not cached".format(url))
 
     df = pd.DataFrame(row_list, columns=columns)
     df = df.set_index("url")

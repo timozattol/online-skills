@@ -12,10 +12,10 @@ from bs4 import BeautifulSoup
 from sklearn.externals import joblib
 
 from features import extract_visible
-from helpers import get_cached, is_cached, eprint, url_to_filename
+from helpers import get_cached, is_cached, eprint, url_to_filename, cache_page
 
-pipeline_path = os.path.join('saved', 'models', 'log_reg_pipeline_general3.pkl')
-pipeline = joblib.load(pipeline_path)
+default_pipeline_path = os.path.join('saved', 'models', 'log_reg_pipeline_general3.pkl')
+default_pipeline = joblib.load(default_pipeline_path)
 
 class Node:
     status = {
@@ -70,7 +70,7 @@ def get_df(graph):
     return pd.DataFrame(rows, columns=["url", "status", "decision_func"])
 
 
-def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True):
+def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True, pipeline=default_pipeline):
 
     # Queue containing: (url, depth)
     queue = deque()
@@ -106,6 +106,9 @@ def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True):
                 r = requests.get(url)
                 status_code = r.status_code
                 text = r.text
+
+                # TODO try if cache page works
+                cache_page(url, text)
             except Exception as e:
                 eprint("Exception while requesting {}".format(url))
                 eprint(e)
@@ -125,8 +128,8 @@ def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True):
                 continue
 
             # Predict label & get strength of prediction
-            label = pipeline.predict([visible_text])[0]
-            decision_func = pipeline.decision_function([visible_text])[0]
+            label = default_pipeline.predict([visible_text])[0]
+            decision_func = default_pipeline.decision_function([visible_text])[0]
 
             node = Node(url, Node.status[label], decision_func)
             G.add_node(node)
