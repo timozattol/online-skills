@@ -70,11 +70,12 @@ def get_df(graph):
     return pd.DataFrame(rows, columns=["url", "status", "decision_func"])
 
 
-def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True, pipeline=default_pipeline):
+def BFS_crawl(initial_urls, depth_limit, breadth_limit, save=True, pipeline=default_pipeline):
 
     # Queue containing: (url, depth)
     queue = deque()
-    queue.append((initial_url, 0, None))
+    for initial_url in initial_urls:
+        queue.append((initial_url, 0, None))
 
     G = nx.DiGraph()
     seen_urls = set()
@@ -83,7 +84,8 @@ def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True, pipeline=defau
     print("Depth_limit: {}\nBreadth_limit: {}.".format(depth_limit, breadth_limit))
 
     # Assuming download+sleep=1s
-    print("Estimated time: {}s".format(np.power(breadth_limit, depth_limit + 1)))
+    estimated_time = len(initial_urls) * np.power(breadth_limit, depth_limit + 1)
+    print("Estimated time: {}s".format(estimated_time))
     start_time = time.time()
 
     while(len(queue) > 0):
@@ -161,7 +163,7 @@ def BFS_crawl(initial_url, depth_limit, breadth_limit, save=True, pipeline=defau
     # Pickle file if asked
     if save:
         save_path = os.path.join('saved', 'graphs', "{}-depth:{}-breadth:{}.pkl"
-            .format(url_to_filename(initial_url), depth_limit, breadth_limit))
+            .format(url_to_filename(initial_urls[0]), depth_limit, breadth_limit))
 
         nx.write_gpickle(G, save_path)
         print("Graph saved under {}".format(save_path))
