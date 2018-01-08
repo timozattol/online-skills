@@ -28,7 +28,7 @@ http://online-learning.harvard.edu/course/data-analysis-life-sciences-5-introduc
 http://online-learning.harvard.edu/course/religion-conflict-and-peace
 http://online-learning.harvard.edu/course/world-religions-through-their-scriptures
 http://online-learning.harvard.edu/course/judaism-through-its-scriptures
-https://www.udemy.com/data-analysis-with-excel-pivot-tables/
+#https://www.udemy.com/data-analysis-with-excel-pivot-tables/ does not work - 403
 https://www.udemy.com/complete-python-bootcamp/
 https://www.udemy.com/java-the-complete-java-developer-course/
 https://www.udemy.com/the-complete-web-developer-course-2/
@@ -154,4 +154,3 @@ https://www.vtc.com/products/qsdropbox.htm
 https://www.vtc.com/products/sql-server-2014-reporting-services.htm
 https://www.vtc.com/products/social-media.htm
 https://www.vtc.com/products/qs.dreamweavercc2014.htm
-# TODO: continue https://www.onlinecoursereport.com/the-50-best-online-course-providers-of-2015/
