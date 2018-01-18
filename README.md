@@ -6,7 +6,7 @@ Optional Master Project done in the [CHILI Lab](https://chili.epfl.ch/), supervi
 Online educational resources have been developing a lot in the past years and it has become easier to follow distance courses & acquire knowledge whilst sitting in front of a computer. This   project   aimed   at   easing   the   detection   of   current   and upcoming sources of online knowledge by building an automatic tool  for  course  webpage  classification,  using  Machine  Learning techniques.  The  tool  was  provided  with  a  manually  constructed training set of labeled webpages and was then improved with a semi-automatic collection algorithm. Despite the difficulty of the task and the small size of the training set, the tool achieved a final accuracy  of  0.726  for  differentiating  between  online  knowledge and other types of webpages. Finally, potential applications of the tool are presented in the context of online educational resources detection
 
 ## Report
-The full report is available here.
+The full report is available [here](report/report.pdf).
 
 ## Requirements
 The project was made in Python using some Data Science libraries such as [scikit-learn](http://scikit-learn.org) and [Pandas](https://pandas.pydata.org/). Other useful libraries such as [NetworkX](https://networkx.github.io/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) were used.
