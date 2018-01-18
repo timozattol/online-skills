@@ -14,6 +14,8 @@ from helpers import is_cached, get_cached
 ### Classification ###
 
 def analyse_classification(X, y, predictor, seed=0):
+    '''Print a report of the classification of X by the predictor, as well as the
+    prediction confusion matrix and overall accuracy.'''
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=seed)
     predictor.fit(X_train, y_train)
     y_pred = predictor.predict(X_test)
@@ -23,7 +25,7 @@ def analyse_classification(X, y, predictor, seed=0):
     print("Accuracy: {}".format(metrics.accuracy_score(y_test, y_pred)))
 
 ### Structural features ###
-
+# Some simple structural features: the count of some html tags in the page
 feature_functions = {
     "a_count": lambda soup: len(soup.find_all("a")),
     "iframe_count": lambda soup: len(soup.find_all("iframe")),
@@ -90,6 +92,9 @@ def tag_visible(element):
     return True
 
 def clean_string(string):
+    '''Clean string by removing double spaces, tabs, newlines, etc.
+    Also remove frequent english stopwords'''
+
     # Remove all double spaces and tabs/newlines/etc.
     string = re.sub("\s\s+" , " ", string)
 
@@ -98,7 +103,7 @@ def clean_string(string):
     return ' '.join(words_no_stopwords)
 
 def extract_visible(soup):
-    '''Extract all visible text from a BeautifulSoup soup'''
+    '''Extract all visible text from a BeautifulSoup soup object'''
     text = soup.html.body.findAll(text=True)
     s = ' '.join(filter(tag_visible, text))
     return clean_string(s)

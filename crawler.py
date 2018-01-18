@@ -18,6 +18,13 @@ default_pipeline_path = os.path.join('saved', 'models', 'log_reg_pipeline_genera
 default_pipeline = joblib.load(default_pipeline_path)
 
 class Node:
+    '''
+    Represent a webpage as a node of a graph. Used by as Node object of
+    Networkx graphs.
+
+    Contains the url of a webpage, its status (True, False or request failed)
+    and the decision_func value from the classification (confidence of class.)
+    '''
     status = {
         True: "class_true",
         False: "class_false",
@@ -43,6 +50,8 @@ class Node:
         return hash(self.url)
 
 def draw_graph(G, plt, print_pos=False, print_neg=False):
+    '''Draw the graph G on plot plt, using the kamada_kawai method.
+    Node colors: green for True, red for False, grey for Failed request'''
     colors = []
 
     for node in G:
@@ -62,6 +71,7 @@ def draw_graph(G, plt, print_pos=False, print_neg=False):
     nx.draw_kamada_kawai(G, ax=ax, node_color=colors, with_labels=False, node_size=50, width=0.5, alpha=1)
 
 def get_df(graph):
+    '''Convert a graph in a Pandas Dataframe listing all the nodes'''
     rows = []
 
     for node in graph:
@@ -71,7 +81,14 @@ def get_df(graph):
 
 
 def BFS_crawl(initial_urls, depth_limit, breadth_limit, save=True, pipeline=default_pipeline):
+    '''
+    Crawl the web in a Breadth First Search manner, starting from multiple
+    roots contained in initial_urls. Iteratively visit each webpage, use the classifier to
+    generate True / False prediction.
+    Follow at max. <breadth_limit> links from each webpage, for a depth of max.
+    <depth_limit>. Running time exponential in those parameters.
 
+    Return the graph of visited webpages'''
     # Queue containing: (url, depth)
     queue = deque()
     for initial_url in initial_urls:
